@@ -50,9 +50,34 @@ func main() {
 	client := horizon.DefaultTestNetClient
 
 	// resp := exampleCreateAccount(client, false)
-	resp := exampleSendLumens(client, false)
-	// resp := exampleBumpSequence(client, true)
+	// resp := exampleSendLumens(client, false)
+	// resp := exampleBumpSequence(client, false)
+	resp := exampleAccountMerge(client, true)
 	fmt.Println(resp.TransactionSuccessToString())
+}
+
+func exampleAccountMerge(client *horizon.Client, mock bool) horizon.TransactionSuccess {
+	keys := initKeys()
+
+	horizonSourceAccount, err := client.LoadAccount(keys[0].Address)
+	dieIfError("loadaccount", err)
+	sourceAccount := mapAccounts(horizonSourceAccount)
+
+	accountMerge := txnbuild.AccountMerge{
+		Destination: keys[1].Address,
+	}
+
+	tx := txnbuild.Transaction{
+		SourceAccount: sourceAccount,
+		Operations:    []txnbuild.Operation{&accountMerge},
+		Network:       network.TestNetworkPassphrase,
+	}
+
+	txeBase64 := buildSignEncode(tx, keys[0].Keypair)
+	log.Println("Base 64 TX: ", txeBase64)
+
+	resp := submit(client, txeBase64, mock)
+	return resp
 }
 
 func exampleBumpSequence(client *horizon.Client, mock bool) horizon.TransactionSuccess {
@@ -63,7 +88,8 @@ func exampleBumpSequence(client *horizon.Client, mock bool) horizon.TransactionS
 	sourceAccount := mapAccounts(horizonSourceAccount)
 
 	bumpSequence := txnbuild.BumpSequence{
-		BumpTo: 9606132444168300,
+		// BumpTo: 41137196761087,
+		BumpTo: -1,
 	}
 
 	tx := txnbuild.Transaction{
@@ -76,19 +102,18 @@ func exampleBumpSequence(client *horizon.Client, mock bool) horizon.TransactionS
 	log.Println("Base 64 TX: ", txeBase64)
 
 	resp := submit(client, txeBase64, mock)
-
 	return resp
 }
 
 func exampleSendLumens(client *horizon.Client, mock bool) horizon.TransactionSuccess {
 	keys := initKeys()
-	horizonSourceAccount, err := client.LoadAccount(keys[0].Address)
+	horizonSourceAccount, err := client.LoadAccount(keys[1].Address)
 	dieIfError("loadaccount", err)
 	sourceAccount := mapAccounts(horizonSourceAccount)
 
 	payment := txnbuild.Payment{
-		Destination: keys[1].Address,
-		Amount:      "10",
+		Destination: keys[0].Address,
+		Amount:      "80",
 	}
 
 	tx := txnbuild.Transaction{

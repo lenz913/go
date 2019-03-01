@@ -125,6 +125,29 @@ func TestBumpSequence(t *testing.T) {
 	assert.Equal(t, expected, received, "Base 64 XDR should match")
 }
 
+func TestAccountMerge(t *testing.T) {
+	kp0 := newKeypair0()
+
+	sourceAccount := Account{
+		ID:             kp0.Address(),
+		SequenceNumber: 40385577484298,
+	}
+
+	accountMerge := AccountMerge{
+		Destination: "GAS4V4O2B7DW5T7IQRPEEVCRXMDZESKISR7DVIGKZQYYV3OSQ5SH5LVP",
+	}
+
+	tx := Transaction{
+		SourceAccount: sourceAccount,
+		Operations:    []Operation{&accountMerge},
+		Network:       network.TestNetworkPassphrase,
+	}
+
+	received := buildSignEncode(tx, kp0, t)
+	expected := "AAAAAODcbeFyXKxmUWK1L6znNbKKIkPkHRJNbLktcKPqLnLFAAAAZAAAJLsAAAALAAAAAAAAAAAAAAABAAAAAAAAAAgAAAAAJcrx2g/Hbs/ohF5CVFG7B5JJSJR+OqDKzDGK7dKHZH4AAAAAAAAAAeoucsUAAABAz5wZN8BluFTXbzGyKYTrQJayT/8Ze5tForHjgkXwY9fIB/hINwHHQ+2wdBN5v6tvA1L6dfS76AytudjkX8CjDg=="
+	assert.Equal(t, expected, received, "Base 64 XDR should match")
+}
+
 func TestMultipleOperations(t *testing.T) {
 	kp1 := newKeypair1()
 	sourceAccount := Account{
