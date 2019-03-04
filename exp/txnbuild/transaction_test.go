@@ -192,6 +192,29 @@ func TestManageDataRemoveDataEntry(t *testing.T) {
 	assert.Equal(t, expected, received, "Base 64 XDR should match")
 }
 
+func TestSetOptionsInflationDestination(t *testing.T) {
+	kp0 := newKeypair0()
+	kp1 := newKeypair1()
+	sourceAccount := Account{
+		ID:             kp0.Address(),
+		SequenceNumber: 40385577484315,
+	}
+
+	setOptions := SetOptions{
+		InflationDestination: kp1.Address(),
+	}
+
+	tx := Transaction{
+		SourceAccount: sourceAccount,
+		Operations:    []Operation{&setOptions},
+		Network:       network.TestNetworkPassphrase,
+	}
+
+	received := buildSignEncode(tx, kp0, t)
+	expected := "AAAAAODcbeFyXKxmUWK1L6znNbKKIkPkHRJNbLktcKPqLnLFAAAAZAAAJLsAAAAcAAAAAAAAAAAAAAABAAAAAAAAAAUAAAABAAAAACXK8doPx27P6IReQlRRuweSSUiUfjqgyswxiu3Sh2R+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAeoucsUAAABAR/HVP3lr4CiR669LU1FZjO1uBQO36TduvYzOnSy786eNNNx+rSEhAt/w1iBdK9fKL8uw9FM+YH4eWOEixRu0Dw=="
+	assert.Equal(t, expected, received, "Base 64 XDR should match")
+}
+
 func TestMultipleOperations(t *testing.T) {
 	kp1 := newKeypair1()
 	sourceAccount := Account{
