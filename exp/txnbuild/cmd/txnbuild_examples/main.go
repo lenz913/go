@@ -58,11 +58,11 @@ func main() {
 	// resp := exampleAccountMerge(client, true)
 	// resp := exampleManageData(client, false)
 	// resp := exampleManageDataRemoveDataEntry(client, false)
-	resp := exampleSetOptionsInflationDestination(client, false)
+	resp := exampleSetOptions(client, false)
 	fmt.Println(resp.TransactionSuccessToString())
 }
 
-func exampleSetOptionsInflationDestination(client *horizon.Client, mock bool) horizon.TransactionSuccess {
+func exampleSetOptions(client *horizon.Client, mock bool) horizon.TransactionSuccess {
 	keys := initKeys()
 
 	horizonSourceAccount, err := client.LoadAccount(keys[0].Address)
@@ -70,7 +70,8 @@ func exampleSetOptionsInflationDestination(client *horizon.Client, mock bool) ho
 	sourceAccount := mapAccounts(horizonSourceAccount)
 
 	setOptions := txnbuild.SetOptions{
-		InflationDestination: keys[1].Address,
+		// InflationDestination: keys[1].Address,
+		SetAuthorization: []txnbuild.AccountFlag{txnbuild.AuthRequired, txnbuild.AuthRevocable},
 	}
 
 	tx := txnbuild.Transaction{
