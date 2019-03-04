@@ -82,12 +82,12 @@ func (c *Client) Stream(request StreamRequest, ctx context.Context, handler func
 	return
 }
 
-func (c *Client) Legders(request LedgerRequest) (ledgers LedgersPage, err error) {
+func (c *Client) Ledgers(request LedgerRequest) (ledgers LedgersPage, err error) {
 	err = sendRequest(request, *c, &ledgers)
 	return
 }
 
-func (c *Client) LegderDetail(request LedgerRequest) (ledger Ledger, err error) {
+func (c *Client) LedgerDetail(request LedgerRequest) (ledger Ledger, err error) {
 	if request.ForSequence == "" {
 		err = errors.New("No sequence number provided")
 	}

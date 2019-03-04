@@ -98,6 +98,20 @@ func ExampleClient_Stream() {
 	}
 }
 
+func ExampleClient_LedgerDetail() {
+
+	client := DefaultPublicNetClient
+	// details for a ledger
+	ledgerRequest := LedgerRequest{ForSequence: "12345"}
+	ledger, err := client.LedgerDetail(ledgerRequest)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	fmt.Print(ledger)
+
+}
+
 func TestAccountDetail(t *testing.T) {
 	hmock := httptest.NewClient()
 	client := &Client{

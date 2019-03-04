@@ -43,5 +43,15 @@ func (m *MockClient) Stream(
 	return a.Error(0)
 }
 
+func (m *MockClient) Ledgers(request LedgerRequest) (LedgersPage, error) {
+	a := m.Called(request)
+	return a.Get(0).(LedgersPage), a.Error(1)
+}
+
+func (m *MockClient) LedgerDetail(request LedgerRequest) (Ledger, error) {
+	a := m.Called(request)
+	return a.Get(0).(Ledger), a.Error(1)
+}
+
 // ensure that the MockClient implements ClientInterface
 var _ ClientInterface = &MockClient{}
