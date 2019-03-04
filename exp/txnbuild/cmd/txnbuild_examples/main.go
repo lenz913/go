@@ -56,8 +56,34 @@ func main() {
 	// resp := exampleSendLumens(client, false)
 	// resp := exampleBumpSequence(client, false)
 	// resp := exampleAccountMerge(client, true)
-	resp := exampleManageData(client, false)
+	// resp := exampleManageData(client, false)
+	resp := exampleManageDataRemoveDataEntry(client, false)
 	fmt.Println(resp.TransactionSuccessToString())
+}
+
+func exampleManageDataRemoveDataEntry(client *horizon.Client, mock bool) horizon.TransactionSuccess {
+	keys := initKeys()
+
+	horizonSourceAccount, err := client.LoadAccount(keys[0].Address)
+	dieIfError("loadaccount", err)
+	sourceAccount := mapAccounts(horizonSourceAccount)
+
+	manageData := txnbuild.ManageData{
+		Name: "Fruit preference",
+		// Value: nil,
+	}
+
+	tx := txnbuild.Transaction{
+		SourceAccount: sourceAccount,
+		Operations:    []txnbuild.Operation{&manageData},
+		Network:       network.TestNetworkPassphrase,
+	}
+
+	txeBase64 := buildSignEncode(tx, keys[0].Keypair)
+	log.Println("Base 64 TX: ", txeBase64)
+
+	resp := submit(client, txeBase64, mock)
+	return resp
 }
 
 func exampleManageData(client *horizon.Client, mock bool) horizon.TransactionSuccess {

@@ -170,6 +170,27 @@ func TestManageData(t *testing.T) {
 	expected := "AAAAAODcbeFyXKxmUWK1L6znNbKKIkPkHRJNbLktcKPqLnLFAAAAZAAAJLsAAAALAAAAAAAAAAAAAAABAAAAAAAAAAoAAAAQRnJ1aXQgcHJlZmVyZW5jZQAAAAEAAAAFQXBwbGUAAAAAAAAAAAAAAeoucsUAAABAncYXM9JYk3FN1rcmjN58P1SoWHgCYSK1ckueZF4Ii7f42HZX5+z/h3CjxhCCwA7QK6s4uZ4n5ba3Ujh0x27YAQ=="
 	assert.Equal(t, expected, received, "Base 64 XDR should match")
 }
+func TestManageDataRemoveDataEntry(t *testing.T) {
+	kp0 := newKeypair0()
+	sourceAccount := Account{
+		ID:             kp0.Address(),
+		SequenceNumber: 40385577484309,
+	}
+
+	manageData := ManageData{
+		Name: "Fruit preference",
+	}
+
+	tx := Transaction{
+		SourceAccount: sourceAccount,
+		Operations:    []Operation{&manageData},
+		Network:       network.TestNetworkPassphrase,
+	}
+
+	received := buildSignEncode(tx, kp0, t)
+	expected := "AAAAAODcbeFyXKxmUWK1L6znNbKKIkPkHRJNbLktcKPqLnLFAAAAZAAAJLsAAAAWAAAAAAAAAAAAAAABAAAAAAAAAAoAAAAQRnJ1aXQgcHJlZmVyZW5jZQAAAAAAAAAAAAAAAeoucsUAAABAvxTjMVAHpIn8EJOznQ5ffLccnaEP1HJcHP/FkVMGzRvtSUOj/F55ABajmUe/WteiU7eJgzbKkgHvIMv1JB5XBw=="
+	assert.Equal(t, expected, received, "Base 64 XDR should match")
+}
 
 func TestMultipleOperations(t *testing.T) {
 	kp1 := newKeypair1()
