@@ -1,6 +1,8 @@
 package horizonclient
 
 import (
+	"context"
+
 	"github.com/stretchr/testify/mock"
 )
 
@@ -31,6 +33,14 @@ func (m *MockClient) Effects(request EffectRequest) (EffectsPage, error) {
 func (m *MockClient) Assets(request AssetRequest) (AssetsPage, error) {
 	a := m.Called(request)
 	return a.Get(0).(AssetsPage), a.Error(1)
+}
+
+func (m *MockClient) Stream(
+	request StreamRequest, ctx context.Context,
+	handler func(interface{}),
+) error {
+	a := m.Called(request, ctx, handler)
+	return a.Error(0)
 }
 
 // ensure that the MockClient implements ClientInterface

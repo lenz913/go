@@ -1,8 +1,10 @@
 package horizonclient
 
 import (
+	"context"
 	"fmt"
 	"testing"
+	"time"
 
 	"github.com/stellar/go/support/http/httptest"
 	"github.com/stretchr/testify/assert"
@@ -64,6 +66,36 @@ func ExampleClient_Assets() {
 		return
 	}
 	fmt.Print(asset)
+}
+
+func ExampleClient_Stream() {
+	// stream effects
+
+	client := DefaultPublicNetClient
+	effectRequest := EffectRequest{Cursor: "now"}
+
+	ctx, cancel := context.WithCancel(context.Background())
+
+	go func() {
+		// Stop streaming after 60 seconds.
+		time.Sleep(60 * time.Second)
+		cancel()
+	}()
+
+	// to do: can `e interface{}` be `e Effect` ?? Then we won't have type assertion.
+	//
+	err := client.Stream(effectRequest, ctx, func(e interface{}) {
+
+		resp, ok := e.(Effect)
+		if ok {
+			fmt.Println(resp.Type)
+		}
+
+	})
+
+	if err != nil {
+		fmt.Println(err)
+	}
 }
 
 func TestAccountDetail(t *testing.T) {

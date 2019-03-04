@@ -57,6 +57,7 @@ type EffectsPage struct {
 
 // EffectResponse contains effect data returned by Horizon.
 // Currently used by LoadAccountMergeAmount only.
+// To Do: Have a more generic Effect struct that supports all effects
 type Effect struct {
 	Type   string `json:"type"`
 	Amount string `json:"amount"`
