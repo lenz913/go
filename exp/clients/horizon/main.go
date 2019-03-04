@@ -70,6 +70,8 @@ type ClientInterface interface {
 	AccountData(request AccountRequest) (AccountData, error)
 	Effects(request EffectRequest) (EffectsPage, error)
 	Assets(request AssetRequest) (AssetsPage, error)
+	Ledgers(request LedgerRequest) (LedgersPage, error)
+	LedgerDetail(request LedgerRequest) (Ledger, error)
 	Stream(request StreamRequest, ctx context.Context, handler func(interface{})) error
 }
 
@@ -119,4 +121,11 @@ type AssetRequest struct {
 	Order          Order
 	Cursor         Cursor
 	Limit          Limit
+}
+
+type LedgerRequest struct {
+	ForSequence string
+	Order       Order
+	Cursor      Cursor
+	Limit       Limit
 }

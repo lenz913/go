@@ -81,3 +81,21 @@ func (c *Client) Stream(request StreamRequest, ctx context.Context, handler func
 	err = request.Stream(c.HorizonURL, ctx, handler)
 	return
 }
+
+func (c *Client) Legders(request LedgerRequest) (ledgers LedgersPage, err error) {
+	err = sendRequest(request, *c, &ledgers)
+	return
+}
+
+func (c *Client) LegderDetail(request LedgerRequest) (ledger Ledger, err error) {
+	if request.ForSequence == "" {
+		err = errors.New("No sequence number provided")
+	}
+
+	if err != nil {
+		return
+	}
+
+	err = sendRequest(request, *c, &ledger)
+	return
+}

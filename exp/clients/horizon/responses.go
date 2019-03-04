@@ -170,3 +170,9 @@ type AssetsPage struct {
 		Records []AssetStat
 	} `json:"_embedded"`
 }
+
+type LedgersPage struct {
+	Embedded struct {
+		Records []Ledger
+	} `json:"_embedded"`
+}
