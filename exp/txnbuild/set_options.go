@@ -32,13 +32,9 @@ type SetOptions struct {
 
 // BuildXDR for SetOptions returns a fully configured XDR Operation.
 func (so *SetOptions) BuildXDR() (xdr.Operation, error) {
-	// Inflation Destination. Once set, there's no way to unset.
-	if so.InflationDestination != "" {
-		err := so.destAccountID.SetAddress(so.InflationDestination)
-		if err != nil {
-			return xdr.Operation{}, errors.Wrap(err, "Failed to set inflation destination address")
-		}
-		so.xdrOp.InflationDest = &so.destAccountID
+	err := so.handleInflation()
+	if err != nil {
+		return xdr.Operation{}, errors.Wrap(err, "Failed to set inflation destination address")
 	}
 
 	so.handleSetFlags()
@@ -51,6 +47,19 @@ func (so *SetOptions) BuildXDR() (xdr.Operation, error) {
 	}
 
 	return xdr.Operation{Body: body}, nil
+}
+
+// handleInflation for SetOptions sets the XDR inflation destination.
+// Once set, a new address can be set, but there's no way to ever unset.
+func (so *SetOptions) handleInflation() (err error) {
+	if so.InflationDestination != "" {
+		err = so.destAccountID.SetAddress(so.InflationDestination)
+		if err != nil {
+			return
+		}
+		so.xdrOp.InflationDest = &so.destAccountID
+	}
+	return
 }
 
 // handleSetFlags for SetOptions sets XDR account flags (represented as a bitmask).
