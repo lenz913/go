@@ -41,6 +41,7 @@ type SetOptions struct {
 	LowThreshold         Threshold
 	MediumThreshold      Threshold
 	HighThreshold        Threshold
+	HomeDomain           string
 	xdrOp                xdr.SetOptionsOp
 }
 
@@ -57,6 +58,10 @@ func (so *SetOptions) BuildXDR() (xdr.Operation, error) {
 	so.handleLowThreshold()
 	so.handleMediumThreshold()
 	so.handleHighThreshold()
+	err = so.handleHomeDomain()
+	if err != nil {
+		return xdr.Operation{}, errors.Wrap(err, "Failed to set home domain")
+	}
 
 	opType := xdr.OperationTypeSetOptions
 	body, err := xdr.NewOperationBody(opType, so.xdrOp)
@@ -104,7 +109,7 @@ func (so *SetOptions) handleClearFlags() {
 	}
 }
 
-// handleMasterWeight for SetOptions set the XDR weight of the master signing key.
+// handleMasterWeight for SetOptions sets the XDR weight of the master signing key.
 // See https://www.stellar.org/developers/guides/concepts/multi-sig.html
 func (so *SetOptions) handleMasterWeight() {
 	if so.MasterWeight != nil {
@@ -112,7 +117,7 @@ func (so *SetOptions) handleMasterWeight() {
 	}
 }
 
-// handleLowThreshold for SetOptions set the XDR value of the account's "low" threshold.
+// handleLowThreshold for SetOptions sets the XDR value of the account's "low" threshold.
 // See https://www.stellar.org/developers/guides/concepts/multi-sig.html
 func (so *SetOptions) handleLowThreshold() {
 	if so.LowThreshold != nil {
@@ -120,7 +125,7 @@ func (so *SetOptions) handleLowThreshold() {
 	}
 }
 
-// handleLowThreshold for SetOptions set the XDR value of the account's "medium" threshold.
+// handleMediumThreshold for SetOptions sets the XDR value of the account's "medium" threshold.
 // See https://www.stellar.org/developers/guides/concepts/multi-sig.html
 func (so *SetOptions) handleMediumThreshold() {
 	if so.MediumThreshold != nil {
@@ -128,10 +133,24 @@ func (so *SetOptions) handleMediumThreshold() {
 	}
 }
 
-// handleLowThreshold for SetOptions set the XDR value of the account's "high" threshold.
+// handleHighThreshold for SetOptions sets the XDR value of the account's "high" threshold.
 // See https://www.stellar.org/developers/guides/concepts/multi-sig.html
 func (so *SetOptions) handleHighThreshold() {
 	if so.HighThreshold != nil {
 		so.xdrOp.HighThreshold = so.HighThreshold
 	}
+}
+
+// handleHomeDomain for SetOptions sets the XDR value of the account's home domain.
+// https://www.stellar.org/developers/guides/concepts/federation.html
+func (so *SetOptions) handleHomeDomain() error {
+	if so.HomeDomain != "" {
+		if len(so.HomeDomain) > 32 {
+			return errors.New("HomeDomain must be 32 characters or less")
+		}
+		xdrHomeDomain := xdr.String32(so.HomeDomain)
+		so.xdrOp.HomeDomain = &xdrHomeDomain
+	}
+
+	return nil
 }

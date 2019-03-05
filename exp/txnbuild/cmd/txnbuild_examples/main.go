@@ -58,7 +58,7 @@ func main() {
 	// resp := exampleAccountMerge(client, true)
 	// resp := exampleManageData(client, false)
 	// resp := exampleManageDataRemoveDataEntry(client, false)
-	resp := exampleSetOptions(client, false)
+	resp := exampleSetOptions(client, true)
 	fmt.Println(resp.TransactionSuccessToString())
 }
 
@@ -73,9 +73,10 @@ func exampleSetOptions(client *horizon.Client, mock bool) horizon.TransactionSuc
 		// InflationDestination: keys[1].Address,
 		// ClearAuthorization: []txnbuild.AccountFlag{txnbuild.AuthRequired, txnbuild.AuthRevocable},
 		// MasterWeight: txnbuild.NewThreshold(255),
-		LowThreshold:    txnbuild.NewThreshold(1),
-		MediumThreshold: txnbuild.NewThreshold(2),
-		HighThreshold:   txnbuild.NewThreshold(2),
+		// LowThreshold:    txnbuild.NewThreshold(1),
+		// MediumThreshold: txnbuild.NewThreshold(2),
+		// HighThreshold:   txnbuild.NewThreshold(2),
+		HomeDomain: "LovelyLumensLookLuminous.com",
 	}
 
 	tx := txnbuild.Transaction{

@@ -305,6 +305,49 @@ func TestSetOptionsThresholds(t *testing.T) {
 	assert.Equal(t, expected, received, "Base 64 XDR should match")
 }
 
+func TestSetOptionsHomeDomain(t *testing.T) {
+	kp0 := newKeypair0()
+	sourceAccount := Account{
+		ID:             kp0.Address(),
+		SequenceNumber: 40385577484325,
+	}
+
+	setOptions := SetOptions{
+		HomeDomain: "LovelyLumensLookLuminous.com",
+	}
+
+	tx := Transaction{
+		SourceAccount: sourceAccount,
+		Operations:    []Operation{&setOptions},
+		Network:       network.TestNetworkPassphrase,
+	}
+
+	received := buildSignEncode(tx, kp0, t)
+	expected := "AAAAAODcbeFyXKxmUWK1L6znNbKKIkPkHRJNbLktcKPqLnLFAAAAZAAAJLsAAAAmAAAAAAAAAAAAAAABAAAAAAAAAAUAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAABxMb3ZlbHlMdW1lbnNMb29rTHVtaW5vdXMuY29tAAAAAAAAAAAAAAAB6i5yxQAAAEAXjzYPYoUdQ617Ltn4wwefJLuy0P3S3dOeFTOWlZxi9KeKsVgqOQ+B+hms2JdpSWRodr0N0Nj6LsZhTjLbv4wO"
+	assert.Equal(t, expected, received, "Base 64 XDR should match")
+}
+
+func TestSetOptionsHomeDomainTooLong(t *testing.T) {
+	kp0 := newKeypair0()
+	sourceAccount := Account{
+		ID:             kp0.Address(),
+		SequenceNumber: 40385577484323,
+	}
+
+	setOptions := SetOptions{
+		HomeDomain: "LovelyLumensLookLuminousLately.com",
+	}
+
+	tx := Transaction{
+		SourceAccount: sourceAccount,
+		Operations:    []Operation{&setOptions},
+		Network:       network.TestNetworkPassphrase,
+	}
+
+	err := tx.Build()
+	assert.Error(t, err, "A validation error was expected (home domain > 32 chars)")
+}
+
 func TestMultipleOperations(t *testing.T) {
 	kp1 := newKeypair1()
 	sourceAccount := Account{
