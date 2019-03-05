@@ -38,6 +38,9 @@ type SetOptions struct {
 	SetAuthorization     []AccountFlag
 	ClearAuthorization   []AccountFlag
 	MasterWeight         Threshold
+	LowThreshold         Threshold
+	MediumThreshold      Threshold
+	HighThreshold        Threshold
 	xdrOp                xdr.SetOptionsOp
 }
 
@@ -48,9 +51,12 @@ func (so *SetOptions) BuildXDR() (xdr.Operation, error) {
 		return xdr.Operation{}, errors.Wrap(err, "Failed to set inflation destination address")
 	}
 
-	so.handleSetFlags()
 	so.handleClearFlags()
+	so.handleSetFlags()
 	so.handleMasterWeight()
+	so.handleLowThreshold()
+	so.handleMediumThreshold()
+	so.handleHighThreshold()
 
 	opType := xdr.OperationTypeSetOptions
 	body, err := xdr.NewOperationBody(opType, so.xdrOp)
@@ -98,9 +104,34 @@ func (so *SetOptions) handleClearFlags() {
 	}
 }
 
+// handleMasterWeight for SetOptions set the XDR weight of the master signing key.
+// See https://www.stellar.org/developers/guides/concepts/multi-sig.html
 func (so *SetOptions) handleMasterWeight() {
 	if so.MasterWeight != nil {
-		weight := so.MasterWeight
-		so.xdrOp.MasterWeight = weight
+		so.xdrOp.MasterWeight = so.MasterWeight
+	}
+}
+
+// handleLowThreshold for SetOptions set the XDR value of the account's "low" threshold.
+// See https://www.stellar.org/developers/guides/concepts/multi-sig.html
+func (so *SetOptions) handleLowThreshold() {
+	if so.LowThreshold != nil {
+		so.xdrOp.LowThreshold = so.LowThreshold
+	}
+}
+
+// handleLowThreshold for SetOptions set the XDR value of the account's "medium" threshold.
+// See https://www.stellar.org/developers/guides/concepts/multi-sig.html
+func (so *SetOptions) handleMediumThreshold() {
+	if so.MediumThreshold != nil {
+		so.xdrOp.MedThreshold = so.MediumThreshold
+	}
+}
+
+// handleLowThreshold for SetOptions set the XDR value of the account's "high" threshold.
+// See https://www.stellar.org/developers/guides/concepts/multi-sig.html
+func (so *SetOptions) handleHighThreshold() {
+	if so.HighThreshold != nil {
+		so.xdrOp.HighThreshold = so.HighThreshold
 	}
 }
