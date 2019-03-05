@@ -42,7 +42,7 @@ func (so *SetOptions) BuildXDR() (xdr.Operation, error) {
 	}
 
 	so.handleSetFlags()
-	// so.handleClearFlags()
+	so.handleClearFlags()
 
 	opType := xdr.OperationTypeSetOptions
 	body, err := xdr.NewOperationBody(opType, so.xdrOp)
@@ -65,5 +65,14 @@ func (so *SetOptions) handleSetFlags() {
 	}
 }
 
-// func (so *SetOptions) handleClearFlags() {
-// }
+// handleClearFlags for SetOptions unsets XDR account flags (represented as a bitmask).
+// See https://www.stellar.org/developers/guides/concepts/accounts.html
+func (so *SetOptions) handleClearFlags() {
+	var flags xdr.Uint32
+	for _, flag := range so.ClearAuthorization {
+		flags = flags | xdr.Uint32(flag)
+	}
+	if len(so.ClearAuthorization) > 0 {
+		so.xdrOp.ClearFlags = &flags
+	}
+}

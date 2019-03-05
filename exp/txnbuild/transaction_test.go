@@ -237,6 +237,28 @@ func TestSetOptionsSetFlags(t *testing.T) {
 	assert.Equal(t, expected, received, "Base 64 XDR should match")
 }
 
+func TestSetOptionsClearFlags(t *testing.T) {
+	kp0 := newKeypair0()
+	sourceAccount := Account{
+		ID:             kp0.Address(),
+		SequenceNumber: 40385577484319,
+	}
+
+	setOptions := SetOptions{
+		ClearAuthorization: []AccountFlag{AuthRequired, AuthRevocable},
+	}
+
+	tx := Transaction{
+		SourceAccount: sourceAccount,
+		Operations:    []Operation{&setOptions},
+		Network:       network.TestNetworkPassphrase,
+	}
+
+	received := buildSignEncode(tx, kp0, t)
+	expected := "AAAAAODcbeFyXKxmUWK1L6znNbKKIkPkHRJNbLktcKPqLnLFAAAAZAAAJLsAAAAgAAAAAAAAAAAAAAABAAAAAAAAAAUAAAAAAAAAAQAAAAMAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAHqLnLFAAAAQK2hb0/FTkNzS/C7CAWbrlgo6Wx5lJZdbt6cup723nGlGrkz92pvcrOQLZUBH3akI9Zdin51Wk4dvihghBFrcA8="
+	assert.Equal(t, expected, received, "Base 64 XDR should match")
+}
+
 func TestMultipleOperations(t *testing.T) {
 	kp1 := newKeypair1()
 	sourceAccount := Account{

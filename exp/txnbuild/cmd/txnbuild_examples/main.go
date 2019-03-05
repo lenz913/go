@@ -71,7 +71,7 @@ func exampleSetOptions(client *horizon.Client, mock bool) horizon.TransactionSuc
 
 	setOptions := txnbuild.SetOptions{
 		// InflationDestination: keys[1].Address,
-		SetAuthorization: []txnbuild.AccountFlag{txnbuild.AuthRequired, txnbuild.AuthRevocable},
+		ClearAuthorization: []txnbuild.AccountFlag{txnbuild.AuthRequired, txnbuild.AuthRevocable},
 	}
 
 	tx := txnbuild.Transaction{
