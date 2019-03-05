@@ -20,6 +20,16 @@ const AuthRevocable = AccountFlag(xdr.AccountFlagsAuthRevocableFlag)
 // set, and prevents the account from ever being merged (deleted).
 const AuthImmutable = AccountFlag(xdr.AccountFlagsAuthImmutableFlag)
 
+// Threshold is the datatype for MasterWeight, Signer.Weight, and Thresholds.
+type Threshold *xdr.Uint32
+
+// NewThreshold returns a pointer to the provided value, used by SetOptions, so that it
+// can distinguish between a zero-valued weight or threshold and one that is unset.
+func NewThreshold(t uint8) Threshold {
+	toXDRType := xdr.Uint32(t)
+	return &toXDRType
+}
+
 // SetOptions represents the Stellar set options operation. See
 // https://www.stellar.org/developers/guides/concepts/list-of-operations.html
 type SetOptions struct {
@@ -27,6 +37,7 @@ type SetOptions struct {
 	InflationDestination string
 	SetAuthorization     []AccountFlag
 	ClearAuthorization   []AccountFlag
+	MasterWeight         Threshold
 	xdrOp                xdr.SetOptionsOp
 }
 
@@ -39,6 +50,7 @@ func (so *SetOptions) BuildXDR() (xdr.Operation, error) {
 
 	so.handleSetFlags()
 	so.handleClearFlags()
+	so.handleMasterWeight()
 
 	opType := xdr.OperationTypeSetOptions
 	body, err := xdr.NewOperationBody(opType, so.xdrOp)
@@ -83,5 +95,12 @@ func (so *SetOptions) handleClearFlags() {
 	}
 	if len(so.ClearAuthorization) > 0 {
 		so.xdrOp.ClearFlags = &flags
+	}
+}
+
+func (so *SetOptions) handleMasterWeight() {
+	if so.MasterWeight != nil {
+		weight := so.MasterWeight
+		so.xdrOp.MasterWeight = weight
 	}
 }
