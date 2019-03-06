@@ -30,6 +30,14 @@ func NewThreshold(t uint8) Threshold {
 	return &toXDRType
 }
 
+// Signer represents the Signer in a SetOptions operation.
+// If the signer already exists, it is updated.
+// If the weight is 0, the signer is deleted.
+type Signer struct {
+	Address string
+	Weight  Threshold
+}
+
 // SetOptions represents the Stellar set options operation. See
 // https://www.stellar.org/developers/guides/concepts/list-of-operations.html
 type SetOptions struct {
@@ -42,12 +50,14 @@ type SetOptions struct {
 	MediumThreshold      Threshold
 	HighThreshold        Threshold
 	HomeDomain           string
+	Signer               Signer
 	xdrOp                xdr.SetOptionsOp
 }
 
 // BuildXDR for SetOptions returns a fully configured XDR Operation.
 func (so *SetOptions) BuildXDR() (xdr.Operation, error) {
-	err := so.handleInflation()
+	var err error
+	err = so.handleInflation()
 	if err != nil {
 		return xdr.Operation{}, errors.Wrap(err, "Failed to set inflation destination address")
 	}
@@ -61,6 +71,10 @@ func (so *SetOptions) BuildXDR() (xdr.Operation, error) {
 	err = so.handleHomeDomain()
 	if err != nil {
 		return xdr.Operation{}, errors.Wrap(err, "Failed to set home domain")
+	}
+	err = so.handleSigner()
+	if err != nil {
+		return xdr.Operation{}, errors.Wrap(err, "Failed to set signer")
 	}
 
 	opType := xdr.OperationTypeSetOptions
@@ -152,5 +166,22 @@ func (so *SetOptions) handleHomeDomain() error {
 		so.xdrOp.HomeDomain = &xdrHomeDomain
 	}
 
+	return nil
+}
+
+// handleSigner for SetOptions sets the XDR value of a signer for the account.
+// See https://www.stellar.org/developers/guides/concepts/multi-sig.html
+func (so *SetOptions) handleSigner() (err error) {
+	// TODO: Validate address
+	if so.Signer != (Signer{}) {
+		var xdrSigner xdr.Signer
+		xdrSigner.Weight = *so.Signer.Weight
+		err = xdrSigner.Key.SetAddress(so.Signer.Address)
+		if err != nil {
+			return
+		}
+
+		so.xdrOp.Signer = &xdrSigner
+	}
 	return nil
 }

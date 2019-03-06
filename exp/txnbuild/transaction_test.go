@@ -348,6 +348,29 @@ func TestSetOptionsHomeDomainTooLong(t *testing.T) {
 	assert.Error(t, err, "A validation error was expected (home domain > 32 chars)")
 }
 
+func TestSetOptionsSigner(t *testing.T) {
+	kp0 := newKeypair0()
+	kp1 := newKeypair1()
+	sourceAccount := Account{
+		ID:             kp0.Address(),
+		SequenceNumber: 40385577484325,
+	}
+
+	setOptions := SetOptions{
+		Signer: Signer{Address: kp1.Address(), Weight: NewThreshold(4)},
+	}
+
+	tx := Transaction{
+		SourceAccount: sourceAccount,
+		Operations:    []Operation{&setOptions},
+		Network:       network.TestNetworkPassphrase,
+	}
+
+	received := buildSignEncode(tx, kp0, t)
+	expected := "AAAAAODcbeFyXKxmUWK1L6znNbKKIkPkHRJNbLktcKPqLnLFAAAAZAAAJLsAAAAmAAAAAAAAAAAAAAABAAAAAAAAAAUAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAJcrx2g/Hbs/ohF5CVFG7B5JJSJR+OqDKzDGK7dKHZH4AAAAEAAAAAAAAAAHqLnLFAAAAQB1P8K0BXzpWdiXwBoMkGLJ8V/HhFQkq+NXmf7DhFVOHQid8Rz2K9cGvlclXWfUqKB60niWlCPTFtmzrKpWVTQ0="
+	assert.Equal(t, expected, received, "Base 64 XDR should match")
+}
+
 func TestMultipleOperations(t *testing.T) {
 	kp1 := newKeypair1()
 	sourceAccount := Account{
