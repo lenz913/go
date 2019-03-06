@@ -43,8 +43,8 @@ type Signer struct {
 type SetOptions struct {
 	destAccountID        xdr.AccountId
 	InflationDestination string
-	SetAuthorization     []AccountFlag
-	ClearAuthorization   []AccountFlag
+	SetFlags             []AccountFlag
+	ClearFlags           []AccountFlag
 	MasterWeight         Threshold
 	LowThreshold         Threshold
 	MediumThreshold      Threshold
@@ -103,10 +103,10 @@ func (so *SetOptions) handleInflation() (err error) {
 // See https://www.stellar.org/developers/guides/concepts/accounts.html
 func (so *SetOptions) handleSetFlags() {
 	var flags xdr.Uint32
-	for _, flag := range so.SetAuthorization {
+	for _, flag := range so.SetFlags {
 		flags = flags | xdr.Uint32(flag)
 	}
-	if len(so.SetAuthorization) > 0 {
+	if len(so.SetFlags) > 0 {
 		so.xdrOp.SetFlags = &flags
 	}
 }
@@ -115,10 +115,10 @@ func (so *SetOptions) handleSetFlags() {
 // See https://www.stellar.org/developers/guides/concepts/accounts.html
 func (so *SetOptions) handleClearFlags() {
 	var flags xdr.Uint32
-	for _, flag := range so.ClearAuthorization {
+	for _, flag := range so.ClearFlags {
 		flags = flags | xdr.Uint32(flag)
 	}
-	if len(so.ClearAuthorization) > 0 {
+	if len(so.ClearFlags) > 0 {
 		so.xdrOp.ClearFlags = &flags
 	}
 }

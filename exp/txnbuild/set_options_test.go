@@ -9,7 +9,7 @@ import (
 
 func TestHandleSetFlagsThreeDifferent(t *testing.T) {
 	options := SetOptions{}
-	options.SetAuthorization = []AccountFlag{1, 2, 4}
+	options.SetFlags = []AccountFlag{1, 2, 4}
 
 	options.handleSetFlags()
 
@@ -19,7 +19,7 @@ func TestHandleSetFlagsThreeDifferent(t *testing.T) {
 
 func TestHandleSetFlagsThreeSame(t *testing.T) {
 	options := SetOptions{}
-	options.SetAuthorization = []AccountFlag{1, 1, 1}
+	options.SetFlags = []AccountFlag{1, 1, 1}
 
 	options.handleSetFlags()
 
@@ -29,7 +29,7 @@ func TestHandleSetFlagsThreeSame(t *testing.T) {
 
 func TestHandleSetFlagsRedundantFlagsAllowed(t *testing.T) {
 	options := SetOptions{}
-	options.SetAuthorization = []AccountFlag{1, 2, 4, 2, 4, 1}
+	options.SetFlags = []AccountFlag{1, 2, 4, 2, 4, 1}
 
 	options.handleSetFlags()
 
@@ -39,7 +39,7 @@ func TestHandleSetFlagsRedundantFlagsAllowed(t *testing.T) {
 
 func TestHandleSetFlagsLessThanThreeAreOK(t *testing.T) {
 	options := SetOptions{}
-	options.SetAuthorization = []AccountFlag{1, 2}
+	options.SetFlags = []AccountFlag{1, 2}
 
 	options.handleSetFlags()
 
@@ -49,7 +49,7 @@ func TestHandleSetFlagsLessThanThreeAreOK(t *testing.T) {
 
 func TestHandleSetFlagsInvalidFlagsAllowed(t *testing.T) {
 	options := SetOptions{}
-	options.SetAuthorization = []AccountFlag{3, 3, 3}
+	options.SetFlags = []AccountFlag{3, 3, 3}
 
 	options.handleSetFlags()
 
@@ -59,7 +59,7 @@ func TestHandleSetFlagsInvalidFlagsAllowed(t *testing.T) {
 
 func TestHandleSetFlagsZeroFlagsAreOK(t *testing.T) {
 	options := SetOptions{}
-	options.SetAuthorization = []AccountFlag{0, 2, 0}
+	options.SetFlags = []AccountFlag{0, 2, 0}
 
 	options.handleSetFlags()
 
@@ -69,7 +69,7 @@ func TestHandleSetFlagsZeroFlagsAreOK(t *testing.T) {
 
 func TestHandleClearFlagsThreeDifferent(t *testing.T) {
 	options := SetOptions{}
-	options.ClearAuthorization = []AccountFlag{1, 2, 4}
+	options.ClearFlags = []AccountFlag{1, 2, 4}
 
 	options.handleClearFlags()
 
@@ -79,7 +79,7 @@ func TestHandleClearFlagsThreeDifferent(t *testing.T) {
 
 func TestHandleClearFlagsThreeSame(t *testing.T) {
 	options := SetOptions{}
-	options.ClearAuthorization = []AccountFlag{1, 1, 1}
+	options.ClearFlags = []AccountFlag{1, 1, 1}
 
 	options.handleClearFlags()
 
@@ -89,7 +89,7 @@ func TestHandleClearFlagsThreeSame(t *testing.T) {
 
 func TestHandleClearFlagsRedundantFlagsAllowed(t *testing.T) {
 	options := SetOptions{}
-	options.ClearAuthorization = []AccountFlag{1, 2, 4, 2, 4, 1}
+	options.ClearFlags = []AccountFlag{1, 2, 4, 2, 4, 1}
 
 	options.handleClearFlags()
 
@@ -99,7 +99,7 @@ func TestHandleClearFlagsRedundantFlagsAllowed(t *testing.T) {
 
 func TestHandleClearFlagsLessThanThreeAreOK(t *testing.T) {
 	options := SetOptions{}
-	options.ClearAuthorization = []AccountFlag{1, 2}
+	options.ClearFlags = []AccountFlag{1, 2}
 
 	options.handleClearFlags()
 
@@ -109,7 +109,7 @@ func TestHandleClearFlagsLessThanThreeAreOK(t *testing.T) {
 
 func TestHandleClearFlagsInvalidFlagsAllowed(t *testing.T) {
 	options := SetOptions{}
-	options.ClearAuthorization = []AccountFlag{3, 3, 3}
+	options.ClearFlags = []AccountFlag{3, 3, 3}
 
 	options.handleClearFlags()
 
@@ -119,7 +119,7 @@ func TestHandleClearFlagsInvalidFlagsAllowed(t *testing.T) {
 
 func TestHandleClearFlagsZeroFlagsAreOK(t *testing.T) {
 	options := SetOptions{}
-	options.ClearAuthorization = []AccountFlag{0, 2, 0}
+	options.ClearFlags = []AccountFlag{0, 2, 0}
 
 	options.handleClearFlags()
 

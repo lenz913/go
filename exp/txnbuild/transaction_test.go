@@ -223,7 +223,7 @@ func TestSetOptionsSetFlags(t *testing.T) {
 	}
 
 	setOptions := SetOptions{
-		SetAuthorization: []AccountFlag{AuthRequired, AuthRevocable},
+		SetFlags: []AccountFlag{AuthRequired, AuthRevocable},
 	}
 
 	tx := Transaction{
@@ -245,7 +245,7 @@ func TestSetOptionsClearFlags(t *testing.T) {
 	}
 
 	setOptions := SetOptions{
-		ClearAuthorization: []AccountFlag{AuthRequired, AuthRevocable},
+		ClearFlags: []AccountFlag{AuthRequired, AuthRevocable},
 	}
 
 	tx := Transaction{
