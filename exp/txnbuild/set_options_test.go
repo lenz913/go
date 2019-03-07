@@ -126,3 +126,13 @@ func TestHandleClearFlagsZeroFlagsAreOK(t *testing.T) {
 	expected := xdr.Uint32(2)
 	assert.Equal(t, expected, *options.xdrOp.ClearFlags, "zero flags are ok")
 }
+
+func TestEmptyHomeDomainOK(t *testing.T) {
+	options := SetOptions{
+		HomeDomain: NewHomeDomain(""),
+	}
+	options.BuildXDR()
+
+	assert.Equal(t, string(*options.xdrOp.HomeDomain), "", "empty string home domain is set")
+
+}
