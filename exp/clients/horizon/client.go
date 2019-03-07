@@ -74,17 +74,22 @@ func (c *Client) Assets(request AssetRequest) (assets AssetsPage, err error) {
 	return
 }
 
+// Stream is for endpoints that support streaming
 func (c *Client) Stream(ctx context.Context, request StreamRequest, handler func(interface{})) (err error) {
 
 	err = request.Stream(ctx, c.HorizonURL, handler)
 	return
 }
 
+// Ledgers returns information about all ledgers.
+// See https://www.stellar.org/developers/horizon/reference/endpoints/ledgers-all.html
 func (c *Client) Ledgers(request LedgerRequest) (ledgers LedgersPage, err error) {
 	err = c.sendRequest(request, &ledgers)
 	return
 }
 
+// LedgerDetails returns information about a particular ledger
+// See https://www.stellar.org/developers/horizon/reference/endpoints/ledgers-single.html
 func (c *Client) LedgerDetail(request LedgerRequest) (ledger Ledger, err error) {
 	if request.ForSequence <= 0 {
 		err = errors.New("Invalid sequence number provided")
