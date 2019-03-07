@@ -77,7 +77,7 @@ func exampleSetOptions(client *horizon.Client, mock bool) horizon.TransactionSuc
 		// MediumThreshold: txnbuild.NewThreshold(2),
 		// HighThreshold:   txnbuild.NewThreshold(2),
 		// HomeDomain: "LovelyLumensLookLuminous.com",
-		Signer: txnbuild.Signer{Address: keys[1].Address, Weight: txnbuild.NewThreshold(0)},
+		Signer: &txnbuild.Signer{Address: keys[1].Address, Weight: *txnbuild.NewThreshold(0)},
 	}
 
 	tx := txnbuild.Transaction{
