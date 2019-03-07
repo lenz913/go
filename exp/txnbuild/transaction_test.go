@@ -267,7 +267,7 @@ func TestSetOptionsMasterWeight(t *testing.T) {
 	}
 
 	setOptions := SetOptions{
-		MasterWeight: NewThreshold(10),
+		MasterWeight: &Threshold{10},
 	}
 
 	tx := Transaction{
@@ -289,9 +289,9 @@ func TestSetOptionsThresholds(t *testing.T) {
 	}
 
 	setOptions := SetOptions{
-		LowThreshold:    NewThreshold(1),
-		MediumThreshold: NewThreshold(2),
-		HighThreshold:   NewThreshold(2),
+		LowThreshold:    &Threshold{1},
+		MediumThreshold: &Threshold{2},
+		HighThreshold:   &Threshold{2},
 	}
 
 	tx := Transaction{
@@ -357,7 +357,7 @@ func TestSetOptionsSigner(t *testing.T) {
 	}
 
 	setOptions := SetOptions{
-		Signer: Signer{Address: kp1.Address(), Weight: NewThreshold(4)},
+		Signer: &Signer{Address: kp1.Address(), Weight: Threshold{4}},
 	}
 
 	tx := Transaction{

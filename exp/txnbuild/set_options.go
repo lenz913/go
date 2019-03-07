@@ -21,13 +21,8 @@ const AuthRevocable = AccountFlag(xdr.AccountFlagsAuthRevocableFlag)
 const AuthImmutable = AccountFlag(xdr.AccountFlagsAuthImmutableFlag)
 
 // Threshold is the datatype for MasterWeight, Signer.Weight, and Thresholds.
-type Threshold *xdr.Uint32
-
-// NewThreshold returns a pointer to the provided value, used by SetOptions, so that it
-// can distinguish between a zero-valued weight or threshold and one that is unset.
-func NewThreshold(t uint8) Threshold {
-	toXDRType := xdr.Uint32(t)
-	return &toXDRType
+type Threshold struct {
+	Value uint8
 }
 
 // Signer represents the Signer in a SetOptions operation.
@@ -45,12 +40,12 @@ type SetOptions struct {
 	InflationDestination string
 	SetFlags             []AccountFlag
 	ClearFlags           []AccountFlag
-	MasterWeight         Threshold
-	LowThreshold         Threshold
-	MediumThreshold      Threshold
-	HighThreshold        Threshold
+	MasterWeight         *Threshold
+	LowThreshold         *Threshold
+	MediumThreshold      *Threshold
+	HighThreshold        *Threshold
 	HomeDomain           string
-	Signer               Signer
+	Signer               *Signer
 	xdrOp                xdr.SetOptionsOp
 }
 
@@ -127,7 +122,8 @@ func (so *SetOptions) handleClearFlags() {
 // See https://www.stellar.org/developers/guides/concepts/multi-sig.html
 func (so *SetOptions) handleMasterWeight() {
 	if so.MasterWeight != nil {
-		so.xdrOp.MasterWeight = so.MasterWeight
+		xdrWeight := xdr.Uint32(so.MasterWeight.Value)
+		so.xdrOp.MasterWeight = &xdrWeight
 	}
 }
 
@@ -135,7 +131,8 @@ func (so *SetOptions) handleMasterWeight() {
 // See https://www.stellar.org/developers/guides/concepts/multi-sig.html
 func (so *SetOptions) handleLowThreshold() {
 	if so.LowThreshold != nil {
-		so.xdrOp.LowThreshold = so.LowThreshold
+		xdrThreshold := xdr.Uint32(so.LowThreshold.Value)
+		so.xdrOp.LowThreshold = &xdrThreshold
 	}
 }
 
@@ -143,7 +140,8 @@ func (so *SetOptions) handleLowThreshold() {
 // See https://www.stellar.org/developers/guides/concepts/multi-sig.html
 func (so *SetOptions) handleMediumThreshold() {
 	if so.MediumThreshold != nil {
-		so.xdrOp.MedThreshold = so.MediumThreshold
+		xdrThreshold := xdr.Uint32(so.MediumThreshold.Value)
+		so.xdrOp.MedThreshold = &xdrThreshold
 	}
 }
 
@@ -151,7 +149,8 @@ func (so *SetOptions) handleMediumThreshold() {
 // See https://www.stellar.org/developers/guides/concepts/multi-sig.html
 func (so *SetOptions) handleHighThreshold() {
 	if so.HighThreshold != nil {
-		so.xdrOp.HighThreshold = so.HighThreshold
+		xdrThreshold := xdr.Uint32(so.HighThreshold.Value)
+		so.xdrOp.HighThreshold = &xdrThreshold
 	}
 }
 
@@ -173,9 +172,10 @@ func (so *SetOptions) handleHomeDomain() error {
 // See https://www.stellar.org/developers/guides/concepts/multi-sig.html
 func (so *SetOptions) handleSigner() (err error) {
 	// TODO: Validate address
-	if so.Signer != (Signer{}) {
+	if so.Signer != nil {
 		var xdrSigner xdr.Signer
-		xdrSigner.Weight = *so.Signer.Weight
+		xdrWeight := xdr.Uint32(so.Signer.Weight.Value)
+		xdrSigner.Weight = xdrWeight
 		err = xdrSigner.Key.SetAddress(so.Signer.Address)
 		if err != nil {
 			return
