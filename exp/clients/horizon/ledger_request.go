@@ -12,15 +12,13 @@ import (
 func (lr LedgerRequest) BuildUrl() (endpoint string, err error) {
 	endpoint = "ledgers"
 
-	if lr.ForSequence != "" {
+	if lr.ForSequence != 0 {
 		endpoint = fmt.Sprintf(
-			"%s/%s",
+			"%s/%d",
 			endpoint,
 			lr.ForSequence,
 		)
-	}
-
-	if lr.ForSequence == "" {
+	} else {
 		queryParams := addQueryParams(lr.Cursor, lr.Limit, lr.Order)
 		if queryParams != "" {
 			endpoint = fmt.Sprintf(

@@ -35,8 +35,8 @@ func (m *MockClient) Assets(request AssetRequest) (AssetsPage, error) {
 	return a.Get(0).(AssetsPage), a.Error(1)
 }
 
-func (m *MockClient) Stream(
-	request StreamRequest, ctx context.Context,
+func (m *MockClient) Stream(ctx context.Context,
+	request StreamRequest,
 	handler func(interface{}),
 ) error {
 	a := m.Called(request, ctx, handler)

@@ -8,7 +8,7 @@ import (
 	"github.com/stellar/go/support/errors"
 )
 
-func sendRequest(hr HorizonRequest, c Client, a interface{}) (err error) {
+func (c *Client) sendRequest(hr HorizonRequest, a interface{}) (err error) {
 	endpoint, err := hr.BuildUrl()
 	if err != nil {
 		return
@@ -19,8 +19,6 @@ func sendRequest(hr HorizonRequest, c Client, a interface{}) (err error) {
 		return errors.Wrap(err, "Error creating HTTP request")
 	}
 	req.Header.Set("X-Client-Name", "go-stellar-sdk")
-	// to do: Confirm if there is a different way to set version. Not sure about this, since we dont build the sdk into an executable file.
-	// Do we currently track sdk versions differently?
 	req.Header.Set("X-Client-Version", app.Version())
 
 	resp, err := c.HTTP.Do(req)
@@ -43,7 +41,7 @@ func (c *Client) AccountDetail(request AccountRequest) (account Account, err err
 		return
 	}
 
-	err = sendRequest(request, *c, &account)
+	err = c.sendRequest(request, &account)
 	return
 }
 
@@ -58,44 +56,44 @@ func (c *Client) AccountData(request AccountRequest) (accountData AccountData, e
 		return
 	}
 
-	err = sendRequest(request, *c, &accountData)
+	err = c.sendRequest(request, &accountData)
 	return
 }
 
 // Effects returns effects(https://www.stellar.org/developers/horizon/reference/resources/effect.html)
 // It can be used to return effects for an account, a ledger, an operation, a transaction and all effects on the network.
 func (c *Client) Effects(request EffectRequest) (effects EffectsPage, err error) {
-	err = sendRequest(request, *c, &effects)
+	err = c.sendRequest(request, &effects)
 	return
 }
 
 // Assets returns asset information.
 // See https://www.stellar.org/developers/horizon/reference/endpoints/assets-all.html
 func (c *Client) Assets(request AssetRequest) (assets AssetsPage, err error) {
-	err = sendRequest(request, *c, &assets)
+	err = c.sendRequest(request, &assets)
 	return
 }
 
-func (c *Client) Stream(request StreamRequest, ctx context.Context, handler func(interface{})) (err error) {
+func (c *Client) Stream(ctx context.Context, request StreamRequest, handler func(interface{})) (err error) {
 
-	err = request.Stream(c.HorizonURL, ctx, handler)
+	err = request.Stream(ctx, c.HorizonURL, handler)
 	return
 }
 
 func (c *Client) Ledgers(request LedgerRequest) (ledgers LedgersPage, err error) {
-	err = sendRequest(request, *c, &ledgers)
+	err = c.sendRequest(request, &ledgers)
 	return
 }
 
 func (c *Client) LedgerDetail(request LedgerRequest) (ledger Ledger, err error) {
-	if request.ForSequence == "" {
-		err = errors.New("No sequence number provided")
+	if request.ForSequence <= 0 {
+		err = errors.New("Invalid sequence number provided")
 	}
 
 	if err != nil {
 		return
 	}
 
-	err = sendRequest(request, *c, &ledger)
+	err = c.sendRequest(request, &ledger)
 	return
 }

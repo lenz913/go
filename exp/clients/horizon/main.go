@@ -72,7 +72,7 @@ type ClientInterface interface {
 	Assets(request AssetRequest) (AssetsPage, error)
 	Ledgers(request LedgerRequest) (LedgersPage, error)
 	LedgerDetail(request LedgerRequest) (Ledger, error)
-	Stream(request StreamRequest, ctx context.Context, handler func(interface{})) error
+	Stream(ctx context.Context, request StreamRequest, handler func(interface{})) error
 }
 
 // DefaultTestNetClient is a default client to connect to test network
@@ -87,12 +87,14 @@ var DefaultPublicNetClient = &Client{
 	HTTP:       http.DefaultClient,
 }
 
+// HorizonRequest contains methods implemented by request structs for horizon endpoints
 type HorizonRequest interface {
 	BuildUrl() (string, error)
 }
 
+// HorizonRequest contains methods implemented by request structs for endpoints that support streaming
 type StreamRequest interface {
-	Stream(horizonURL string, ctx context.Context, handler func(interface{})) error
+	Stream(ctx context.Context, horizonURL string, handler func(interface{})) error
 }
 
 // AccountRequest struct contains data for making requests to the accounts endpoint of an horizon server
@@ -123,8 +125,9 @@ type AssetRequest struct {
 	Limit          Limit
 }
 
+// LedgerRequest struct contains data for getting ledger details from an horizon server.
 type LedgerRequest struct {
-	ForSequence string
+	ForSequence uint
 	Order       Order
 	Cursor      Cursor
 	Limit       Limit

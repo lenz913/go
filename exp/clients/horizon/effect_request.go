@@ -110,8 +110,8 @@ func stream(
 			return errors.Wrap(err, "Error sending HTTP request")
 		}
 
-		// To do: Why not just check if StatusCode != 200 ? Was there a reason why it was implemented like this?
-		if resp.StatusCode/100 != 2 {
+		// Expected statusCode are 200-299
+		if resp.StatusCode >= 200 && resp.StatusCode < 300 {
 			return fmt.Errorf("Got bad HTTP status code %d", resp.StatusCode)
 		}
 		defer resp.Body.Close()
@@ -206,8 +206,8 @@ func stream(
 }
 
 func (er EffectRequest) Stream(
-	horizonURL string,
 	ctx context.Context,
+	horizonURL string,
 	handler func(interface{}),
 ) (err error) {
 
