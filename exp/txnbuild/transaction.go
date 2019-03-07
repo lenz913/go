@@ -1,3 +1,7 @@
+/*
+Package txnbuild implements transactions and operations on the Stellar network.
+TODO: More explanation + links here
+*/
 package txnbuild
 
 import (

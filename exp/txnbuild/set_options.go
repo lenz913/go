@@ -20,10 +20,9 @@ const AuthRevocable = AccountFlag(xdr.AccountFlagsAuthRevocableFlag)
 // set, and prevents the account from ever being merged (deleted).
 const AuthImmutable = AccountFlag(xdr.AccountFlagsAuthImmutableFlag)
 
-// Threshold is the datatype for MasterWeight, Signer.Weight, and Thresholds.
-type Threshold struct {
-	Value uint8
-}
+// Threshold is the datatype for MasterWeight, Signer.Weight, and Thresholds. Each is a number
+// between 0-255 inclusive.
+type Threshold uint8
 
 // Signer represents the Signer in a SetOptions operation.
 // If the signer already exists, it is updated.
@@ -33,18 +32,33 @@ type Signer struct {
 	Weight  Threshold
 }
 
+// NewHomeDomain is syntactic sugar that makes instantiating SetOptions more convenient.
+func NewHomeDomain(hd string) *string {
+	return &hd
+}
+
+// NewThreshold is syntactic sugar that makes instantiating SetOptions more convenient.
+func NewThreshold(t Threshold) *Threshold {
+	return &t
+}
+
+// NewInflationDestination is syntactic sugar that makes instantiating SetOptions more convenient.
+func NewInflationDestination(ai string) *string {
+	return &ai
+}
+
 // SetOptions represents the Stellar set options operation. See
 // https://www.stellar.org/developers/guides/concepts/list-of-operations.html
 type SetOptions struct {
 	destAccountID        xdr.AccountId
-	InflationDestination string
+	InflationDestination *string
 	SetFlags             []AccountFlag
 	ClearFlags           []AccountFlag
 	MasterWeight         *Threshold
 	LowThreshold         *Threshold
 	MediumThreshold      *Threshold
 	HighThreshold        *Threshold
-	HomeDomain           string
+	HomeDomain           *string
 	Signer               *Signer
 	xdrOp                xdr.SetOptionsOp
 }
@@ -84,8 +98,8 @@ func (so *SetOptions) BuildXDR() (xdr.Operation, error) {
 // handleInflation for SetOptions sets the XDR inflation destination.
 // Once set, a new address can be set, but there's no way to ever unset.
 func (so *SetOptions) handleInflation() (err error) {
-	if so.InflationDestination != "" {
-		err = so.destAccountID.SetAddress(so.InflationDestination)
+	if so.InflationDestination != nil {
+		err = so.destAccountID.SetAddress(*so.InflationDestination)
 		if err != nil {
 			return
 		}
@@ -122,7 +136,7 @@ func (so *SetOptions) handleClearFlags() {
 // See https://www.stellar.org/developers/guides/concepts/multi-sig.html
 func (so *SetOptions) handleMasterWeight() {
 	if so.MasterWeight != nil {
-		xdrWeight := xdr.Uint32(so.MasterWeight.Value)
+		xdrWeight := xdr.Uint32(*so.MasterWeight)
 		so.xdrOp.MasterWeight = &xdrWeight
 	}
 }
@@ -131,7 +145,7 @@ func (so *SetOptions) handleMasterWeight() {
 // See https://www.stellar.org/developers/guides/concepts/multi-sig.html
 func (so *SetOptions) handleLowThreshold() {
 	if so.LowThreshold != nil {
-		xdrThreshold := xdr.Uint32(so.LowThreshold.Value)
+		xdrThreshold := xdr.Uint32(*so.LowThreshold)
 		so.xdrOp.LowThreshold = &xdrThreshold
 	}
 }
@@ -140,7 +154,7 @@ func (so *SetOptions) handleLowThreshold() {
 // See https://www.stellar.org/developers/guides/concepts/multi-sig.html
 func (so *SetOptions) handleMediumThreshold() {
 	if so.MediumThreshold != nil {
-		xdrThreshold := xdr.Uint32(so.MediumThreshold.Value)
+		xdrThreshold := xdr.Uint32(*so.MediumThreshold)
 		so.xdrOp.MedThreshold = &xdrThreshold
 	}
 }
@@ -149,7 +163,7 @@ func (so *SetOptions) handleMediumThreshold() {
 // See https://www.stellar.org/developers/guides/concepts/multi-sig.html
 func (so *SetOptions) handleHighThreshold() {
 	if so.HighThreshold != nil {
-		xdrThreshold := xdr.Uint32(so.HighThreshold.Value)
+		xdrThreshold := xdr.Uint32(*so.HighThreshold)
 		so.xdrOp.HighThreshold = &xdrThreshold
 	}
 }
@@ -157,11 +171,11 @@ func (so *SetOptions) handleHighThreshold() {
 // handleHomeDomain for SetOptions sets the XDR value of the account's home domain.
 // https://www.stellar.org/developers/guides/concepts/federation.html
 func (so *SetOptions) handleHomeDomain() error {
-	if so.HomeDomain != "" {
-		if len(so.HomeDomain) > 32 {
+	if so.HomeDomain != nil {
+		if len(*so.HomeDomain) > 32 {
 			return errors.New("HomeDomain must be 32 characters or less")
 		}
-		xdrHomeDomain := xdr.String32(so.HomeDomain)
+		xdrHomeDomain := xdr.String32(*so.HomeDomain)
 		so.xdrOp.HomeDomain = &xdrHomeDomain
 	}
 
@@ -174,7 +188,7 @@ func (so *SetOptions) handleSigner() (err error) {
 	// TODO: Validate address
 	if so.Signer != nil {
 		var xdrSigner xdr.Signer
-		xdrWeight := xdr.Uint32(so.Signer.Weight.Value)
+		xdrWeight := xdr.Uint32(so.Signer.Weight)
 		xdrSigner.Weight = xdrWeight
 		err = xdrSigner.Key.SetAddress(so.Signer.Address)
 		if err != nil {

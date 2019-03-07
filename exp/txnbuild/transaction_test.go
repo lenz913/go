@@ -201,7 +201,7 @@ func TestSetOptionsInflationDestination(t *testing.T) {
 	}
 
 	setOptions := SetOptions{
-		InflationDestination: kp1.Address(),
+		InflationDestination: NewInflationDestination(kp1.Address()),
 	}
 
 	tx := Transaction{
@@ -267,7 +267,7 @@ func TestSetOptionsMasterWeight(t *testing.T) {
 	}
 
 	setOptions := SetOptions{
-		MasterWeight: &Threshold{10},
+		MasterWeight: NewThreshold(10),
 	}
 
 	tx := Transaction{
@@ -289,9 +289,9 @@ func TestSetOptionsThresholds(t *testing.T) {
 	}
 
 	setOptions := SetOptions{
-		LowThreshold:    &Threshold{1},
-		MediumThreshold: &Threshold{2},
-		HighThreshold:   &Threshold{2},
+		LowThreshold:    NewThreshold(1),
+		MediumThreshold: NewThreshold(2),
+		HighThreshold:   NewThreshold(2),
 	}
 
 	tx := Transaction{
@@ -313,7 +313,7 @@ func TestSetOptionsHomeDomain(t *testing.T) {
 	}
 
 	setOptions := SetOptions{
-		HomeDomain: "LovelyLumensLookLuminous.com",
+		HomeDomain: NewHomeDomain("LovelyLumensLookLuminous.com"),
 	}
 
 	tx := Transaction{
@@ -335,7 +335,7 @@ func TestSetOptionsHomeDomainTooLong(t *testing.T) {
 	}
 
 	setOptions := SetOptions{
-		HomeDomain: "LovelyLumensLookLuminousLately.com",
+		HomeDomain: NewHomeDomain("LovelyLumensLookLuminousLately.com"),
 	}
 
 	tx := Transaction{
@@ -357,7 +357,7 @@ func TestSetOptionsSigner(t *testing.T) {
 	}
 
 	setOptions := SetOptions{
-		Signer: &Signer{Address: kp1.Address(), Weight: Threshold{4}},
+		Signer: &Signer{Address: kp1.Address(), Weight: Threshold(4)},
 	}
 
 	tx := Transaction{
